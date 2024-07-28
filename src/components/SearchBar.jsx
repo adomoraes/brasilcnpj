@@ -17,8 +17,21 @@ const SearchBar = () => {
 	}, [])
 
 	const handleChange = (e) => {
-		setCnpj(e.target.value)
+		const value = e.target.value.replace(/\D/g, "") // Remove tudo que não é número
+		if (value.length <= 14) {
+			setCnpj(formatCnpj(value))
+		}
 		setError("")
+	}
+
+	const formatCnpj = (value) => {
+		if (value.length <= 2) return value
+		if (value.length <= 5) return value.replace(/(\d{2})(\d+)/, "$1.$2")
+		if (value.length <= 8)
+			return value.replace(/(\d{2})(\d{3})(\d+)/, "$1.$2.$3")
+		if (value.length <= 12)
+			return value.replace(/(\d{2})(\d{3})(\d{3})(\d+)/, "$1.$2.$3/$4")
+		return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d+)/, "$1.$2.$3/$4-$5")
 	}
 
 	const handleSubmit = async (e) => {
@@ -27,16 +40,17 @@ const SearchBar = () => {
 			cnpjSchema.parse(cnpj)
 			setError("")
 
+			const unmaskedCnpj = cnpj.replace(/\D/g, "") // Remove a máscara antes de buscar os dados
 			const savedData = localStorage.getItem("companyDetails")
 			if (savedData) {
 				const parsedData = JSON.parse(savedData)
-				if (parsedData.companyData.cnpj === cnpj) {
+				if (parsedData.companyData.cnpj === unmaskedCnpj) {
 					setResult(parsedData)
 					return
 				}
 			}
 
-			const data = await fetchCnpjData(cnpj)
+			const data = await fetchCnpjData(unmaskedCnpj)
 			setResult(data)
 			alert("CNPJ válido!") //inserir LOADING
 		} catch (e) {
