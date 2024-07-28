@@ -11,15 +11,6 @@ export const fetchCnpjData = async (cnpj) => {
 
 	const data = response.data
 
-	// ▪ Nome
-	// ▪ Razão Social
-	// ▪ Data de Abertura
-	// ▪ Situação
-	// ▪ Atividade Principal
-	// ▪ Endereço Completo
-	// ▪ Telefone
-	// ▪ E-mail
-
 	const companyData = {
 		razao_social: data.razao_social,
 		nome_fantasia: data.nome_fantasia,
@@ -34,5 +25,16 @@ export const fetchCnpjData = async (cnpj) => {
 		email: data.email,
 	}
 
-	return companyData
+	const socios = data.qsa.map((socio) => ({
+		nome_socio: socio.nome_socio,
+		faixa_etaria: socio.faixa_etaria,
+		cnpj_cpf_do_socio: socio.cnpj_cpf_do_socio,
+		qualificacao_socio: socio.qualificacao_socio,
+		data_entrada_sociedade: socio.data_entrada_sociedade,
+	}))
+
+	return {
+		companyData,
+		socios,
+	}
 }
