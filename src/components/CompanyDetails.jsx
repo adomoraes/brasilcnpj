@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { companyDetailsSchema, socioSchema } from "../utils/validation"
 
 const formatDate = (dateString) => {
 	const date = new Date(dateString)
@@ -13,6 +14,7 @@ const parseDate = (dateString) => {
 const CompanyDetails = ({ result }) => {
 	const [companyData, setCompanyData] = useState(result?.companyData || {})
 	const [socios, setSocios] = useState(result?.socios || [])
+	const [error, setError] = useState("")
 
 	useEffect(() => {
 		if (result) {
@@ -62,17 +64,39 @@ const CompanyDetails = ({ result }) => {
 	}
 
 	const handleSave = () => {
+		// Limpa a mensagem de erro antes de começar a validação
+		setError("")
 		const dataToSave = {
 			companyData,
 			socios,
 		}
-		localStorage.setItem("companyDetails", JSON.stringify(dataToSave))
-		alert("Dados salvos com sucesso!")
+
+		try {
+			// Validação dos dados com o schema da empresa
+			companyDetailsSchema.parse(dataToSave)
+
+			// Validação dos dados dos sócios
+			socios.forEach((socio) => {
+				socioSchema.parse(socio)
+			})
+
+			// Salvamento dos dados
+			localStorage.setItem("companyDetails", JSON.stringify(dataToSave))
+			alert("Dados salvos com sucesso!")
+		} catch (e) {
+			// Tratamento de erros de validação
+			if (e.errors) {
+				setError(e.errors[0].message)
+			} else {
+				setError("Erro desconhecido durante a validação.")
+			}
+		}
 	}
 
 	return (
 		<div className='max-w-lg mt-4 p-4 border rounded bg-white'>
 			<h2 className='text-2xl font-bold mb-2'>Resultado da Busca:</h2>
+			{error && <p className='mt-4 text-red-500'>{error}</p>}
 			<div>
 				<h3 className='text-xl font-bold mt-4'>Dados da Empresa:</h3>
 				<p>
