@@ -15,6 +15,7 @@ const CompanyDetails = ({ result }) => {
 	const [companyData, setCompanyData] = useState(result?.companyData || {})
 	const [socios, setSocios] = useState(result?.socios || [])
 	const [error, setError] = useState("")
+	const [darkMode, setDarkMode] = useState(false)
 
 	useEffect(() => {
 		if (result) {
@@ -64,7 +65,6 @@ const CompanyDetails = ({ result }) => {
 	}
 
 	const handleSave = () => {
-		// Limpa a mensagem de erro antes de começar a validação
 		setError("")
 		const dataToSave = {
 			companyData,
@@ -72,19 +72,13 @@ const CompanyDetails = ({ result }) => {
 		}
 
 		try {
-			// Validação dos dados com o schema da empresa
 			companyDetailsSchema.parse(dataToSave)
-
-			// Validação dos dados dos sócios
 			socios.forEach((socio) => {
 				socioSchema.parse(socio)
 			})
-
-			// Salvamento dos dados
 			localStorage.setItem("companyDetails", JSON.stringify(dataToSave))
 			alert("Dados salvos com sucesso!")
 		} catch (e) {
-			// Tratamento de erros de validação
 			if (e.errors) {
 				setError(e.errors[0].message)
 			} else {
@@ -94,173 +88,245 @@ const CompanyDetails = ({ result }) => {
 	}
 
 	return (
-		<div className='max-w-lg mt-4 p-4 border rounded bg-white'>
-			<h2 className='text-2xl font-bold mb-2'>Resultado da Busca:</h2>
+		<div
+			className={`max-w-3xl mx-auto mt-4 p-6 border rounded-lg shadow-lg ${darkMode ? "bg-gray-900 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}>
+			<button
+				onClick={() => setDarkMode(!darkMode)}
+				className={`absolute top-4 right-4 p-2 rounded-full ${darkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"} focus:outline-none focus:ring-2 focus:ring-blue-500`}>
+				{darkMode ? "🌞" : "🌙"}
+			</button>
+			<h2 className='text-3xl font-bold mb-4'>Resultado da Busca:</h2>
 			{error && <p className='mt-4 text-red-500'>{error}</p>}
 			<div>
-				<h3 className='text-xl font-bold mt-4'>Dados da Empresa:</h3>
-				<p>
-					<strong>Razão Social:</strong>
-					<input
-						type='text'
-						name='razao_social'
-						value={companyData.razao_social || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Nome Fantasia:</strong>
-					<input
-						type='text'
-						name='nome_fantasia'
-						value={companyData.nome_fantasia || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Data de Início de Atividade:</strong>
-					<input
-						type='text'
-						name='data_inicio_atividade'
-						value={formatDate(companyData.data_inicio_atividade) || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Situação Cadastral:</strong>
-					<input
-						type='text'
-						name='descricao_situacao_cadastral'
-						value={companyData.descricao_situacao_cadastral || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Atividade Principal:</strong>
-					<input
-						type='text'
-						name='cnae_fiscal_descricao'
-						value={companyData.cnae_fiscal_descricao || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Endereço:</strong>
-					<input
-						type='text'
-						name='logradouro'
-						value={companyData.logradouro || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-					<input
-						type='text'
-						name='numero'
-						value={companyData.numero || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-					<input
-						type='text'
-						name='bairro'
-						value={companyData.bairro || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-					<input
-						type='text'
-						name='municipio'
-						value={companyData.municipio || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Telefone:</strong>
-					<input
-						type='text'
-						name='ddd_telefone_1'
-						value={companyData.ddd_telefone_1 || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
-				<p>
-					<strong>Email:</strong>
-					<input
-						type='text'
-						name='email'
-						value={companyData.email || ""}
-						onChange={handleChange}
-						className='ml-2 p-1 border rounded'
-					/>
-				</p>
+				<h3 className='text-2xl font-semibold mt-4'>Dados da Empresa:</h3>
+				<form className='space-y-4'>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='razao_social'>
+							Razão Social:
+						</label>
+						<input
+							type='text'
+							id='razao_social'
+							name='razao_social'
+							value={companyData.razao_social || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='nome_fantasia'>
+							Nome Fantasia:
+						</label>
+						<input
+							type='text'
+							id='nome_fantasia'
+							name='nome_fantasia'
+							value={companyData.nome_fantasia || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='data_inicio_atividade'>
+							Data de Início de Atividade:
+						</label>
+						<input
+							type='text'
+							id='data_inicio_atividade'
+							name='data_inicio_atividade'
+							value={formatDate(companyData.data_inicio_atividade) || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label
+							className='font-semibold'
+							htmlFor='descricao_situacao_cadastral'>
+							Situação Cadastral:
+						</label>
+						<input
+							type='text'
+							id='descricao_situacao_cadastral'
+							name='descricao_situacao_cadastral'
+							value={companyData.descricao_situacao_cadastral || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='cnae_fiscal_descricao'>
+							Atividade Principal:
+						</label>
+						<input
+							type='text'
+							id='cnae_fiscal_descricao'
+							name='cnae_fiscal_descricao'
+							value={companyData.cnae_fiscal_descricao || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='logradouro'>
+							Endereço:
+						</label>
+						<div className='flex flex-wrap gap-2'>
+							<input
+								type='text'
+								id='logradouro'
+								name='logradouro'
+								value={companyData.logradouro || ""}
+								onChange={handleChange}
+								placeholder='Logradouro'
+								className={`p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/2 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+							/>
+							<input
+								type='text'
+								id='numero'
+								name='numero'
+								value={companyData.numero || ""}
+								onChange={handleChange}
+								placeholder='Número'
+								className={`p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+							/>
+							<input
+								type='text'
+								id='bairro'
+								name='bairro'
+								value={companyData.bairro || ""}
+								onChange={handleChange}
+								placeholder='Bairro'
+								className={`p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/4 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+							/>
+							<input
+								type='text'
+								id='municipio'
+								name='municipio'
+								value={companyData.municipio || ""}
+								onChange={handleChange}
+								placeholder='Município'
+								className={`p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/2 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+							/>
+						</div>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='ddd_telefone_1'>
+							Telefone:
+						</label>
+						<input
+							type='text'
+							id='ddd_telefone_1'
+							name='ddd_telefone_1'
+							value={companyData.ddd_telefone_1 || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+					<div className='flex flex-col'>
+						<label className='font-semibold' htmlFor='email'>
+							Email:
+						</label>
+						<input
+							type='text'
+							id='email'
+							name='email'
+							value={companyData.email || ""}
+							onChange={handleChange}
+							className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+						/>
+					</div>
+				</form>
 			</div>
 			<div>
-				<h3 className='text-xl font-bold mt-4'>Sócios:</h3>
+				<h3 className='text-2xl font-semibold mt-4'>Sócios:</h3>
 				{socios.map((socio, index) => (
-					<div key={index} className='mt-2 p-2 border rounded bg-gray-50'>
-						<p>
-							<strong>Nome:</strong>
-							<input
-								type='text'
-								name='nome_socio'
-								value={socio.nome_socio || ""}
-								onChange={(e) => handleSocioChange(index, e)}
-								className='ml-2 p-1 border rounded'
-							/>
-						</p>
-						<p>
-							<strong>Faixa Etária:</strong>
-							<input
-								type='text'
-								name='faixa_etaria'
-								value={socio.faixa_etaria || ""}
-								onChange={(e) => handleSocioChange(index, e)}
-								className='ml-2 p-1 border rounded'
-							/>
-						</p>
-						<p>
-							<strong>CNPJ/CPF:</strong>
-							<input
-								type='text'
-								name='cnpj_cpf_do_socio'
-								value={socio.cnpj_cpf_do_socio || ""}
-								onChange={(e) => handleSocioChange(index, e)}
-								className='ml-2 p-1 border rounded'
-							/>
-						</p>
-						<p>
-							<strong>Qualificação:</strong>
-							<input
-								type='text'
-								name='qualificacao_socio'
-								value={socio.qualificacao_socio || ""}
-								onChange={(e) => handleSocioChange(index, e)}
-								className='ml-2 p-1 border rounded'
-							/>
-						</p>
-						<p>
-							<strong>Data de Entrada:</strong>
-							<input
-								type='text'
-								name='data_entrada_sociedade'
-								value={formatDate(socio.data_entrada_sociedade) || ""}
-								onChange={(e) => handleSocioChange(index, e)}
-								className='ml-2 p-1 border rounded'
-							/>
-						</p>
+					<div
+						key={index}
+						className={`mt-4 p-4 border rounded-lg ${darkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-300"}`}>
+						<form className='space-y-4'>
+							<div className='flex flex-col'>
+								<label
+									className='font-semibold'
+									htmlFor={`nome_socio_${index}`}>
+									Nome:
+								</label>
+								<input
+									type='text'
+									id={`nome_socio_${index}`}
+									name='nome_socio'
+									value={socio.nome_socio || ""}
+									onChange={(e) => handleSocioChange(index, e)}
+									className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+								/>
+							</div>
+							<div className='flex flex-col'>
+								<label
+									className='font-semibold'
+									htmlFor={`faixa_etaria_${index}`}>
+									Faixa Etária:
+								</label>
+								<input
+									type='text'
+									id={`faixa_etaria_${index}`}
+									name='faixa_etaria'
+									value={socio.faixa_etaria || ""}
+									onChange={(e) => handleSocioChange(index, e)}
+									className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+								/>
+							</div>
+							<div className='flex flex-col'>
+								<label
+									className='font-semibold'
+									htmlFor={`cnpj_cpf_do_socio_${index}`}>
+									CNPJ/CPF:
+								</label>
+								<input
+									type='text'
+									id={`cnpj_cpf_do_socio_${index}`}
+									name='cnpj_cpf_do_socio'
+									value={socio.cnpj_cpf_do_socio || ""}
+									onChange={(e) => handleSocioChange(index, e)}
+									className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+								/>
+							</div>
+							<div className='flex flex-col'>
+								<label
+									className='font-semibold'
+									htmlFor={`qualificacao_socio_${index}`}>
+									Qualificação:
+								</label>
+								<input
+									type='text'
+									id={`qualificacao_socio_${index}`}
+									name='qualificacao_socio'
+									value={socio.qualificacao_socio || ""}
+									onChange={(e) => handleSocioChange(index, e)}
+									className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+								/>
+							</div>
+							<div className='flex flex-col'>
+								<label
+									className='font-semibold'
+									htmlFor={`data_entrada_sociedade_${index}`}>
+									Data de Entrada:
+								</label>
+								<input
+									type='text'
+									id={`data_entrada_sociedade_${index}`}
+									name='data_entrada_sociedade'
+									value={formatDate(socio.data_entrada_sociedade) || ""}
+									onChange={(e) => handleSocioChange(index, e)}
+									className={`mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-300"}`}
+								/>
+							</div>
+						</form>
 					</div>
 				))}
 			</div>
 			<button
 				onClick={handleSave}
-				className='mt-4 p-2 bg-blue-500 text-white rounded'>
+				className={`mt-4 p-2 rounded-lg shadow-md ${darkMode ? "bg-blue-700 text-white hover:bg-blue-600" : "bg-blue-500 text-white hover:bg-blue-600"}`}>
 				Salvar
 			</button>
 		</div>
