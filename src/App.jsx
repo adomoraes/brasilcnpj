@@ -5,7 +5,7 @@ function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route path='/' element={<HomePage />} />
+				<Route path='/brasilcnpj' element={<HomePage />} />
 			</Routes>
 		</Router>
 	)
