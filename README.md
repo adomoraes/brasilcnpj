@@ -2,6 +2,12 @@
 
 Este projeto é uma aplicação web desenvolvida em React com Vite, Tailwind CSS, Zod e React Router. O objetivo da aplicação é permitir a consulta de informações de empresas a partir do CNPJ utilizando a API da BrasilAPI. Além disso, o projeto inclui funcionalidades para exibição e edição dos dados da empresa de forma intuitiva e responsiva.
 
+**Produção**
+
+```bash
+https://adomoraes.github.io/brasilcnpj/
+```
+
 ## Tecnologias Utilizadas
 
 - **React**: Biblioteca JavaScript para construir interfaces de usuário.
@@ -26,14 +32,10 @@ Este projeto é uma aplicação web desenvolvida em React com Vite, Tailwind CSS
 |   |-- components/
 |       |-- SearchBar.jsx
 |       |-- CompanyDetails.jsx
-|       |-- CompanyCard.jsx
 |   |-- pages/
 |       |-- HomePage.jsx
-|       |-- DetailsPage.jsx
 |   |-- services/
 |       |-- api.js
-|   |-- styles/
-|       |-- global.css
 |   |-- utils/
 |       |-- validation.js
 |   |-- App.jsx
@@ -43,48 +45,59 @@ Este projeto é uma aplicação web desenvolvida em React com Vite, Tailwind CSS
 
 ## Instalação e Execução
 
-1. **Clone o repositório:**
+1. **Instalar Node:**
+
+   ```bash
+   # installs nvm (Node Version Manager)
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+   # download and install Node.js (you may need to restart the terminal)
+   nvm install 20
+
+   # verifies the right Node.js version is in the environment
+   node -v # should print `v20.16.0`
+
+   # verifies the right npm version is in the environment
+   npm -v # should print `10.8.1`
+   ```
+
+2. **Instalar Vite: (https://www.npmjs.com/package/vite)**
+
+   ```bash
+   npm i vite
+   ```
+
+3. **Clone o repositório:**
 
    ```bash
    git clone https://github.com/adomoraes/brasilcnpj.git
    cd brasilcnpj
    ```
 
-2. **Instale as dependências:**
+4. **Instale as dependências:**
 
    ```bash
    npm install
    ```
 
-3. **Execute o projeto:**
+5. **Execute o projeto:**
 
    ```bash
    npm run dev
    ```
 
-4. **Acesse a aplicação:**
-   - Acesse `http://localhost:5173` no seu navegador.
+6. **Acesse a aplicação:**
+   - Acesse `http://localhost:5173` no seu navegador. (verificar a port disponibilizada pelo Vite)
 
 ## Uso
 
 1. **Consulta de CNPJ:**
 
-   - Insira um CNPJ válido no campo de busca e clique em "Consultar".
+   - Insira um CNPJ válido no campo de busca e clique em "Buscar".
    - Os detalhes da empresa serão exibidos abaixo do campo de busca.
 
 2. **Edição de Dados:**
-   - Clique no botão "Editar" ao lado dos dados da empresa.
    - Altere as informações desejadas e clique em "Salvar".
-
-## Contribuição
-
-Sinta-se à vontade para contribuir com melhorias e novas funcionalidades. Para isso, siga os passos abaixo:
-
-1. Faça um fork deste repositório.
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`).
-3. Commit suas alterações (`git commit -m 'Adiciona nova feature'`).
-4. Faça um push para a branch (`git push origin feature/nova-feature`).
-5. Abra um Pull Request.
 
 ## Licença
 
