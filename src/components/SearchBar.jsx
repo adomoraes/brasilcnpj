@@ -59,38 +59,37 @@ const SearchBar = () => {
 			await delay(2000) // Adiciona um delay de 2 segundos
 			const data = await fetchCnpjData(unmaskedCnpj)
 			setResult(data)
+			localStorage.setItem("companyDetails", JSON.stringify(data)) // Armazena os dados na local storage
 		} catch (e) {
 			if (e.errors) {
 				setError(e.errors[0].message)
 			} else {
-				setError(e.message)
+				setError("Erro ao buscar os dados da empresa")
 			}
-			setResult(null)
 		} finally {
 			setLoading(false)
 		}
 	}
 
 	return (
-		<div className='flex flex-col items-center'>
-			<form onSubmit={handleSubmit} className='flex flex-col items-center'>
+		<div className='max-w-md mx-auto p-4 bg-white shadow-md rounded'>
+			<form onSubmit={handleSubmit} className='flex flex-col space-y-4'>
 				<input
 					type='text'
 					value={cnpj}
 					onChange={handleChange}
+					className='px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
 					placeholder='Digite o CNPJ'
-					className='border p-2 mb-2'
 				/>
-				{error && <span className='text-red-500'>{error}</span>}
-				<button type='submit' className='bg-blue-500 text-white p-2 rounded'>
+				<button
+					type='submit'
+					className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'>
 					Buscar
 				</button>
 			</form>
-			{loading ? (
-				<LoadingSpinner />
-			) : (
-				result && <CompanyDetails result={result} />
-			)}
+			{loading && <LoadingSpinner className='mt-4' />}
+			{error && <p className='mt-4 text-red-500'>{error}</p>}
+			{result && <CompanyDetails result={result} />}
 		</div>
 	)
 }

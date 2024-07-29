@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react"
 
+const formatDate = (dateString) => {
+	const date = new Date(dateString)
+	return date.toLocaleDateString("pt-BR")
+}
+
+const parseDate = (dateString) => {
+	const [day, month, year] = dateString.split("/")
+	return new Date(`${year}-${month}-${day}`)
+}
+
 const CompanyDetails = ({ result }) => {
 	const [companyData, setCompanyData] = useState(result?.companyData || {})
 	const [socios, setSocios] = useState(result?.socios || [])
@@ -22,17 +32,33 @@ const CompanyDetails = ({ result }) => {
 
 	const handleChange = (e) => {
 		const { name, value } = e.target
-		setCompanyData((prevState) => ({
-			...prevState,
-			[name]: value,
-		}))
+		if (name === "data_inicio_atividade") {
+			const parsedDate = parseDate(value)
+			setCompanyData((prevState) => ({
+				...prevState,
+				[name]: formatDate(parsedDate),
+			}))
+		} else {
+			setCompanyData((prevState) => ({
+				...prevState,
+				[name]: value,
+			}))
+		}
 	}
 
 	const handleSocioChange = (index, e) => {
 		const { name, value } = e.target
-		const newSocios = [...socios]
-		newSocios[index][name] = value
-		setSocios(newSocios)
+		if (name === "data_entrada_sociedade") {
+			const parsedDate = parseDate(value)
+			const formattedDate = formatDate(parsedDate)
+			const newSocios = [...socios]
+			newSocios[index][name] = formattedDate
+			setSocios(newSocios)
+		} else {
+			const newSocios = [...socios]
+			newSocios[index][name] = value
+			setSocios(newSocios)
+		}
 	}
 
 	const handleSave = () => {
@@ -74,7 +100,7 @@ const CompanyDetails = ({ result }) => {
 					<input
 						type='text'
 						name='data_inicio_atividade'
-						value={companyData.data_inicio_atividade || ""}
+						value={formatDate(companyData.data_inicio_atividade) || ""}
 						onChange={handleChange}
 						className='ml-2 p-1 border rounded'
 					/>
@@ -200,7 +226,7 @@ const CompanyDetails = ({ result }) => {
 							<input
 								type='text'
 								name='data_entrada_sociedade'
-								value={socio.data_entrada_sociedade || ""}
+								value={formatDate(socio.data_entrada_sociedade) || ""}
 								onChange={(e) => handleSocioChange(index, e)}
 								className='ml-2 p-1 border rounded'
 							/>
