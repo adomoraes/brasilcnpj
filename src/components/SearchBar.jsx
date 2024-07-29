@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { cnpjSchema } from "../utils/validation"
 import { fetchCnpjData } from "../services/api"
 import CompanyDetails from "./CompanyDetails"
-import LoadingSpinner from "./LoadingSpinner" // Importe o LoadingSpinner
+import LoadingSpinner from "./LoadingSpinner"
 
 const SearchBar = () => {
 	const [cnpj, setCnpj] = useState("")
@@ -19,7 +19,7 @@ const SearchBar = () => {
 	}, [])
 
 	const handleChange = (e) => {
-		const value = e.target.value.replace(/\D/g, "") // Remove tudo que não é número
+		const value = e.target.value.replace(/\D/g, "")
 		if (value.length <= 14) {
 			setCnpj(formatCnpj(value))
 		}
@@ -45,7 +45,7 @@ const SearchBar = () => {
 			cnpjSchema.parse(cnpj)
 			setError("")
 
-			const unmaskedCnpj = cnpj.replace(/\D/g, "") // Remove a máscara antes de buscar os dados
+			const unmaskedCnpj = cnpj.replace(/\D/g, "")
 			const savedData = localStorage.getItem("companyDetails")
 			if (savedData) {
 				const parsedData = JSON.parse(savedData)
@@ -56,10 +56,10 @@ const SearchBar = () => {
 				}
 			}
 
-			await delay(2000) // Adiciona um delay de 2 segundos
+			await delay(2000)
 			const data = await fetchCnpjData(unmaskedCnpj)
 			setResult(data)
-			localStorage.setItem("companyDetails", JSON.stringify(data)) // Armazena os dados na local storage
+			localStorage.setItem("companyDetails", JSON.stringify(data))
 		} catch (e) {
 			if (e.errors) {
 				setError(e.errors[0].message)
