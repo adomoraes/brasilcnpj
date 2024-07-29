@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react"
 import { cnpjSchema } from "../utils/validation"
 import { fetchCnpjData } from "../services/api"
 import CompanyDetails from "./CompanyDetails"
+import LoadingSpinner from "./LoadingSpinner" // Importe o LoadingSpinner
 
 const SearchBar = () => {
 	const [cnpj, setCnpj] = useState("")
 	const [error, setError] = useState("")
 	const [result, setResult] = useState(null)
+	const [loading, setLoading] = useState(false)
 
 	useEffect(() => {
 		const savedData = localStorage.getItem("companyDetails")
@@ -34,8 +36,11 @@ const SearchBar = () => {
 		return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d+)/, "$1.$2.$3/$4-$5")
 	}
 
+	const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 	const handleSubmit = async (e) => {
 		e.preventDefault()
+		setLoading(true)
 		try {
 			cnpjSchema.parse(cnpj)
 			setError("")
@@ -46,13 +51,14 @@ const SearchBar = () => {
 				const parsedData = JSON.parse(savedData)
 				if (parsedData.companyData.cnpj === unmaskedCnpj) {
 					setResult(parsedData)
+					setLoading(false)
 					return
 				}
 			}
 
+			await delay(2000) // Adiciona um delay de 2 segundos
 			const data = await fetchCnpjData(unmaskedCnpj)
 			setResult(data)
-			alert("CNPJ válido!") //inserir LOADING
 		} catch (e) {
 			if (e.errors) {
 				setError(e.errors[0].message)
@@ -60,6 +66,8 @@ const SearchBar = () => {
 				setError(e.message)
 			}
 			setResult(null)
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -78,7 +86,11 @@ const SearchBar = () => {
 					Buscar
 				</button>
 			</form>
-			{result && <CompanyDetails result={result} />}
+			{loading ? (
+				<LoadingSpinner />
+			) : (
+				result && <CompanyDetails result={result} />
+			)}
 		</div>
 	)
 }
